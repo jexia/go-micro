@@ -42,6 +42,7 @@ func id(id string) uint64 {
 }
 
 func (c *protoCodec) Write(m *codec.Message, b interface{}) error {
+	defer fmt.Printf("===> DATA SENT")
 	switch m.Type {
 	case codec.Request:
 		c.Lock()
@@ -122,7 +123,7 @@ func (c *protoCodec) Write(m *codec.Message, b interface{}) error {
 func (c *protoCodec) ReadHeader(m *codec.Message, mt codec.MessageType) error {
 	c.buf.Reset()
 	c.mt = mt
-
+	fmt.Printf("===> CALL READ HEADER")
 	switch mt {
 	case codec.Request:
 		data, err := ReadNetString(c.rwc)
