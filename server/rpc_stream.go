@@ -41,6 +41,7 @@ func (r *rpcStream) Send(msg interface{}) error {
 		Id:       r.id,
 		Type:     codec.Response,
 	}
+	fmt.Printf("===> RPC STREAM CODEC: %T\n", r.codec)
 
 	if err := r.codec.Write(&resp, msg); err != nil {
 		r.err = err
@@ -52,7 +53,6 @@ func (r *rpcStream) Send(msg interface{}) error {
 func (r *rpcStream) Recv(msg interface{}) error {
 	req := new(codec.Message)
 	req.Type = codec.Request
-	fmt.Printf("===> RPC STREAM RECV: %q\n", msg)
 	err := r.codec.ReadHeader(req, req.Type)
 	r.Lock()
 	defer r.Unlock()
@@ -60,6 +60,7 @@ func (r *rpcStream) Recv(msg interface{}) error {
 		// discard body
 		r.codec.ReadBody(nil)
 		r.err = err
+		fmt.Printf("===> RPC STREAM RECV READ HEADER ERROR: %q\n", err)
 		return err
 	}
 
@@ -73,6 +74,7 @@ func (r *rpcStream) Recv(msg interface{}) error {
 			r.codec.ReadBody(nil)
 			r.Lock()
 			r.err = io.EOF
+			fmt.Printf("===> RPC STREAM RECV LAST STREAM RESPONSE ERROR: %q\n", err)
 			return io.EOF
 		default:
 			return errors.New(req.Error)
@@ -86,8 +88,10 @@ func (r *rpcStream) Recv(msg interface{}) error {
 	r.Lock()
 	if err != nil {
 		r.err = err
+		fmt.Printf("===> RPC STREAM RECV READ BODY ERROR: %q\n", err)
 		return err
 	}
+	fmt.Printf("===> RPC STREAM RECV PAYLOAD: %q\n", msg)
 
 	return nil
 }
