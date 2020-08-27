@@ -30,7 +30,7 @@ func (r *rpcStream) Request() Request {
 }
 
 func (r *rpcStream) Send(msg interface{}) error {
-	fmt.Printf("===> RPC STREAM SEND: %q\n", msg)
+	fmt.Printf("===> RPC STREAM SEND (%s): %q\n", r.codec.String(), msg)
 	r.Lock()
 	defer r.Unlock()
 
@@ -41,7 +41,6 @@ func (r *rpcStream) Send(msg interface{}) error {
 		Id:       r.id,
 		Type:     codec.Response,
 	}
-	fmt.Printf("===> RPC STREAM CODEC: %T\n", r.codec)
 
 	if err := r.codec.Write(&resp, msg); err != nil {
 		r.err = err
