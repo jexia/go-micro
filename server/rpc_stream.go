@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"sync"
 
@@ -29,6 +30,7 @@ func (r *rpcStream) Request() Request {
 }
 
 func (r *rpcStream) Send(msg interface{}) error {
+	fmt.Printf("Send message: %+v", msg)
 	r.Lock()
 	defer r.Unlock()
 
@@ -50,7 +52,7 @@ func (r *rpcStream) Send(msg interface{}) error {
 func (r *rpcStream) Recv(msg interface{}) error {
 	req := new(codec.Message)
 	req.Type = codec.Request
-
+	fmt.Printf("Recv message: %+v", msg)
 	err := r.codec.ReadHeader(req, req.Type)
 	r.Lock()
 	defer r.Unlock()
