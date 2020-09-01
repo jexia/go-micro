@@ -46,6 +46,7 @@ func (c *Codec) ReadHeader(m *codec.Message, t codec.MessageType) error {
 }
 
 func (c *Codec) ReadBody(b interface{}) error {
+	fmt.Printf("===> GRPC CODEC READBODY CALL WITH: %q", b)
 	// no body
 	if b == nil {
 		return nil

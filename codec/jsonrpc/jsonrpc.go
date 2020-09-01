@@ -63,6 +63,7 @@ func (j *jsonCodec) ReadHeader(m *codec.Message, mt codec.MessageType) error {
 }
 
 func (j *jsonCodec) ReadBody(b interface{}) error {
+	fmt.Printf("===> JSONRPC CODEC READBODY CALL WITH: %q", b)
 	switch j.mt {
 	case codec.Request:
 		return j.s.ReadBody(b)

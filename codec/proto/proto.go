@@ -2,6 +2,7 @@
 package proto
 
 import (
+	"fmt"
 	"io"
 	"io/ioutil"
 
@@ -18,6 +19,7 @@ func (c *Codec) ReadHeader(m *codec.Message, t codec.MessageType) error {
 }
 
 func (c *Codec) ReadBody(b interface{}) error {
+	fmt.Printf("===> PROTO CODEC READBODY CALL WITH: %q", b)
 	if b == nil {
 		return nil
 	}

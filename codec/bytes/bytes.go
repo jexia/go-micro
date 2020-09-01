@@ -23,6 +23,7 @@ func (c *Codec) ReadHeader(m *codec.Message, t codec.MessageType) error {
 }
 
 func (c *Codec) ReadBody(b interface{}) error {
+	fmt.Printf("===> BYTES CODEC READBODY CALL WITH: %q", b)
 	// read bytes
 	buf, err := ioutil.ReadAll(c.Conn)
 	if err != nil {

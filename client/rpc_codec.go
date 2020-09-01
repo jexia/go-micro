@@ -3,6 +3,7 @@ package client
 import (
 	"bytes"
 	errs "errors"
+	"fmt"
 
 	"github.com/micro/go-micro/v2/codec"
 	raw "github.com/micro/go-micro/v2/codec/bytes"
@@ -248,7 +249,7 @@ func (c *rpcCodec) ReadBody(b interface{}) error {
 		v.Data = c.buf.rbuf.Bytes()
 		return nil
 	}
-
+	fmt.Printf("===> RPC CODEC TRYING TO READ BODY (%s): %q", c.codec.String(), b)
 	if err := c.codec.ReadBody(b); err != nil {
 		return errors.InternalServerError("go.micro.client.codec", err.Error())
 	}
