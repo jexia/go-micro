@@ -72,7 +72,7 @@ func (r *rpcStream) Send(msg interface{}) error {
 		return err
 	}
 
-	fmt.Printf("===> RPC CLIENT STREAM SENT: %q %q\n", req, msg)
+	fmt.Printf("===> RPC CLIENT STREAM SENT (%s): %q %q\n", r.codec.String(), req, msg)
 
 	return nil
 }
@@ -131,7 +131,7 @@ func (r *rpcStream) Recv(msg interface{}) error {
 			fmt.Printf("===> RPC CLIENT STREAM RECV READ BODY ERROR 2: %q\n", err)
 		}
 	}
-	fmt.Printf("===> RPC CLIENT STREAM RECV STREAM: %+v %q\n", r, msg)
+	fmt.Printf("===> RPC CLIENT STREAM RECV STREAM MESSAGE (%s): %+v %+v\n", r.codec.String(), r, msg)
 
 	return r.err
 }

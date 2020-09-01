@@ -161,6 +161,7 @@ func (c *protoCodec) ReadHeader(m *codec.Message, mt codec.MessageType) error {
 }
 
 func (c *protoCodec) ReadBody(b interface{}) error {
+	fmt.Printf("===> PROTORPC CODEC READBODY CALL WITH: %q", b)
 	var data []byte
 	switch c.mt {
 	case codec.Request, codec.Response:
