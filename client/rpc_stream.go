@@ -51,7 +51,7 @@ func (r *rpcStream) Response() Response {
 func (r *rpcStream) Send(msg interface{}) error {
 	r.Lock()
 	defer r.Unlock()
-	fmt.Printf("===> RPC CLIENT STREAM SEND: %q\n", msg)
+
 	if r.isClosed() {
 		r.err = errShutdown
 		fmt.Printf("===> RPC CLIENT STREAM SEND ERROR SHUTDOWN\n")
@@ -71,6 +71,8 @@ func (r *rpcStream) Send(msg interface{}) error {
 		fmt.Printf("===> RPC CLIENT STREAM WRITE ERROR\n")
 		return err
 	}
+
+	fmt.Printf("===> RPC CLIENT STREAM SENT: %q %q\n", req, msg)
 
 	return nil
 }
@@ -129,6 +131,7 @@ func (r *rpcStream) Recv(msg interface{}) error {
 			fmt.Printf("===> RPC CLIENT STREAM RECV READ BODY ERROR 2: %q\n", err)
 		}
 	}
+	fmt.Printf("===> RPC CLIENT STREAM RECV STREAM: %+v %q\n", r, msg)
 
 	return r.err
 }
