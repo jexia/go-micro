@@ -19,12 +19,13 @@ func (c *Codec) ReadHeader(m *codec.Message, t codec.MessageType) error {
 }
 
 func (c *Codec) ReadBody(b interface{}) error {
-	fmt.Printf("===> PROTO CODEC READBODY CALL WITH: %q", b)
+	fmt.Printf("===> PROTO CODEC READBODY CALL WITH: %+v\n", b)
 	if b == nil {
 		return nil
 	}
 	buf, err := ioutil.ReadAll(c.Conn)
 	if err != nil {
+		fmt.Printf("===> PROTO CODEC READBODY READALL ERROR: %q\n", err)
 		return err
 	}
 	m, ok := b.(proto.Message)

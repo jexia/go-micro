@@ -249,7 +249,7 @@ func (c *rpcCodec) ReadBody(b interface{}) error {
 		v.Data = c.buf.rbuf.Bytes()
 		return nil
 	}
-	fmt.Printf("===> RPC CODEC TRYING TO READ BODY (%s): %q", c.codec.String(), b)
+	fmt.Printf("===> RPC CODEC TRYING TO READ BODY (%s): %q\n", c.codec.String(), b)
 	if err := c.codec.ReadBody(b); err != nil {
 		return errors.InternalServerError("go.micro.client.codec", err.Error())
 	}
