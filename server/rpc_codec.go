@@ -2,6 +2,7 @@ package server
 
 import (
 	"bytes"
+	"fmt"
 	"sync"
 
 	"github.com/micro/go-micro/v2/codec"
@@ -305,24 +306,29 @@ func (c *rpcCodec) Write(r *codec.Message, b interface{}) error {
 
 	// is it a raw frame?
 	if v, ok := b.(*raw.Frame); ok {
+		fmt.Printf("===> RPC STREAM CODEC WRITE IT'S RAW FRAME\n")
 		body = v.Data
 		// if we have encoded data just send it
 	} else if len(r.Body) > 0 {
+		fmt.Printf("===> RPC STREAM CODEC HAVE BODY\n")
 		body = r.Body
 		// write the body to codec
 	} else if err := c.codec.Write(m, b); err != nil {
 		c.buf.wbuf.Reset()
+		fmt.Printf("===> RPC STREAM WRITE BODY RETURN ERROR: %q\n", err)
 
 		// write an error if it failed
 		m.Error = errors.Wrapf(err, "Unable to encode body").Error()
 		m.Header["Micro-Error"] = m.Error
 		// no body to write
+		fmt.Printf("===> RPC STREAM WRITE ERROR RESPONSE: %q\n", m.Error)
 		if err := c.codec.Write(m, nil); err != nil {
 			return err
 		}
 	} else {
 		// set the body
 		body = c.buf.wbuf.Bytes()
+		fmt.Printf("===> RPC STREAM CODEC WRITE SET BODY AS BYTES: %q\n", body)
 	}
 
 	// Set content type if theres content
@@ -331,6 +337,7 @@ func (c *rpcCodec) Write(r *codec.Message, b interface{}) error {
 	}
 
 	// send on the socket
+	fmt.Printf("===> RPC STREAM CODEC SENDING TO SOCKET: %+v, %+v\n", m.Header, body)
 	return c.socket.Send(&transport.Message{
 		Header: m.Header,
 		Body:   body,

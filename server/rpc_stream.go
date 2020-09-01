@@ -102,6 +102,7 @@ func (r *rpcStream) Error() error {
 }
 
 func (r *rpcStream) Close() error {
+	fmt.Printf("===> RPC STREAM SERVER CLOSE\n")
 	r.Lock()
 	defer r.Unlock()
 	r.closed = true
