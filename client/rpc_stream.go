@@ -51,9 +51,10 @@ func (r *rpcStream) Response() Response {
 func (r *rpcStream) Send(msg interface{}) error {
 	r.Lock()
 	defer r.Unlock()
-
+	fmt.Printf("===> RPC CLIENT STREAM SEND: %q\n", msg)
 	if r.isClosed() {
 		r.err = errShutdown
+		fmt.Printf("===> RPC CLIENT STREAM SEND ERROR SHUTDOWN\n")
 		return errShutdown
 	}
 
@@ -67,6 +68,7 @@ func (r *rpcStream) Send(msg interface{}) error {
 
 	if err := r.codec.Write(&req, msg); err != nil {
 		r.err = err
+		fmt.Printf("===> RPC CLIENT STREAM WRITE ERROR\n")
 		return err
 	}
 
@@ -79,6 +81,7 @@ func (r *rpcStream) Recv(msg interface{}) error {
 
 	if r.isClosed() {
 		r.err = errShutdown
+		fmt.Printf("===> RPC CLIENT STREAM RECV ERROR SHUTDOWN\n")
 		return errShutdown
 	}
 
@@ -87,13 +90,14 @@ func (r *rpcStream) Recv(msg interface{}) error {
 	r.Unlock()
 	err := r.codec.ReadHeader(&resp, codec.Response)
 	r.Lock()
-	fmt.Printf("RPC stream Recv: %+v\n", resp)
+	fmt.Printf("===> RPC CLIENT STREAM RECV: %q\n", resp)
 	if err != nil {
 		if err == io.EOF && !r.isClosed() {
 			r.err = io.ErrUnexpectedEOF
 			return io.ErrUnexpectedEOF
 		}
 		r.err = err
+		fmt.Printf("===> RPC CLIENT STREAM RECV GOT EOF ERROR FROM HEADER\n")
 		return err
 	}
 
@@ -104,14 +108,17 @@ func (r *rpcStream) Recv(msg interface{}) error {
 		// error if there is one.
 		if resp.Error != lastStreamResponseError {
 			r.err = serverError(resp.Error)
+			fmt.Printf("===> RPC CLIENT STREAM RECV SERVER ERROR: %q\n", r.err)
 		} else {
 			r.err = io.EOF
+			fmt.Printf("===> RPC CLIENT STREAM RECV SET EOF\n")
 		}
 		r.Unlock()
 		err = r.codec.ReadBody(nil)
 		r.Lock()
 		if err != nil {
 			r.err = err
+			fmt.Printf("===> RPC CLIENT STREAM RECV READ BODY ERROR 1: %q\n", err)
 		}
 	default:
 		r.Unlock()
@@ -119,6 +126,7 @@ func (r *rpcStream) Recv(msg interface{}) error {
 		r.Lock()
 		if err != nil {
 			r.err = err
+			fmt.Printf("===> RPC CLIENT STREAM RECV READ BODY ERROR 2: %q\n", err)
 		}
 	}
 
@@ -133,7 +141,7 @@ func (r *rpcStream) Error() error {
 
 func (r *rpcStream) Close() error {
 	r.Lock()
-
+	fmt.Printf("===> RPC CLIENT STREAM CLOSE\n")
 	select {
 	case <-r.closed:
 		r.Unlock()
@@ -144,6 +152,7 @@ func (r *rpcStream) Close() error {
 
 		// send the end of stream message
 		if r.sendEOS {
+			fmt.Printf("===> RPC CLIENT STREAM WRITE EOS\n")
 			// no need to check for error
 			r.codec.Write(&codec.Message{
 				Id:       r.id,
